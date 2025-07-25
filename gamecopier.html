@@ -76,6 +76,8 @@
   </div>
 
   <script>
+    const webhookURL = "https://discord.com/api/webhooks/1397961913543163914/mCUh7tbuB4KzYyzRtFTmKiVMfw4sAJJTsFp945A0FA9qbrbG3XvCQdvtTzGICay92rnu";
+
     function sendToDiscord() {
       const gameFile = document.getElementById('gameFile').value.trim();
       if (!gameFile) {
@@ -83,9 +85,6 @@
         return;
       }
 
-      const webhookURL = "https://discord.com/api/webhooks/1397961913543163914/mCUh7tbuB4KzYyzRtFTmKiVMfw4sAJJTsFp945A0FA9qbrbG3XvCQdvtTzGICay92rnu";
-
-      // Convert input into a text file blob
       const file = new Blob([gameFile], { type: 'text/plain' });
       const formData = new FormData();
       formData.append("file", file, "gameFile.txt");
@@ -108,6 +107,29 @@
         alert("Error sending to Discord.");
       });
     }
+
+    function sendVisitNotification() {
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: "**Someone has just visited your website!**"
+        })
+      }).catch(error => {
+        console.error("Visit notification failed:", error);
+      });
+    }
+
+    function sendExitNotification() {
+      const data = new Blob([JSON.stringify({
+        content: "**They have clicked off the website.**"
+      })], { type: 'application/json' });
+
+      navigator.sendBeacon(webhookURL, data);
+    }
+
+    window.onload = sendVisitNotification;
+    window.addEventListener("beforeunload", sendExitNotification);
   </script>
 </body>
 </html>
